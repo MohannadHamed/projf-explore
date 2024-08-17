@@ -150,16 +150,21 @@ module mandelbrot(
           mulA <= x;
           mulB <= y;
         end
+        mulStart <= _GEN_1 | mulStart;
       end
-      else if (~_GEN_2) begin
-        if (_GEN_4) begin
-          mulA <= xt;
-          mulB <= xt;
+      else begin
+        if (~_GEN_2) begin
+          if (_GEN_4) begin
+            mulA <= xt;
+            mulB <= xt;
+          end
+          else if (_GEN_13) begin
+            mulA <= y;
+            mulB <= y;
+          end
         end
-        else if (_GEN_13) begin
-          mulA <= y;
-          mulB <= y;
-        end
+        mulStart <=
+          ~_GEN_2 & (_GEN_4 | (_GEN_5 ? _mulModule_io_done : ~_GEN_6 & mulStart));
       end
       if (_GEN_0 | ~_GEN_3) begin
       end
@@ -184,7 +189,6 @@ module mandelbrot(
        {io_start ? 25'h0 : xy2}};
     xy2 <= _GEN_12[state];
     if (reset) begin
-      mulStart <= 1'h0;
       state <= 3'h0;
       iter <= 8'h0;
       calculating <= 1'h0;
@@ -197,16 +201,6 @@ module mandelbrot(
       automatic logic [7:0][7:0] _GEN_17;
       _GEN_14 = _GEN_7 ? 3'h1 : state;
       _GEN_15 = _GEN_8 ? iter : iter + 8'h1;
-      if (_GEN)
-        calculating <= io_start | calculating;
-      else begin
-        if (_GEN_0)
-          mulStart <= _GEN_1 | mulStart;
-        else
-          mulStart <=
-            ~_GEN_2 & (_GEN_4 | (_GEN_5 ? _mulModule_io_done : ~_GEN_6 & mulStart));
-        calculating <= (~_GEN_0 | _GEN_1) & calculating;
-      end
       _GEN_16 =
         {{_GEN_14},
          {_GEN_14},
@@ -227,6 +221,10 @@ module mandelbrot(
          {iter},
          {io_start ? 8'h0 : iter}};
       iter <= _GEN_17[state];
+      if (_GEN)
+        calculating <= io_start | calculating;
+      else
+        calculating <= (~_GEN_0 | _GEN_1) & calculating;
       if (_GEN | ~_GEN_0) begin
       end
       else
