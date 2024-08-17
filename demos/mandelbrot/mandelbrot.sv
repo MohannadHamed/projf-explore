@@ -3,12 +3,16 @@ module mul(
   input         clock,
                 reset,
                 io_start,
-  output        io_done,
+  output        io_busy,
+                io_done,
+                io_valid,
+                io_ovf,
   input  [24:0] io_a,
                 io_b,
   output [24:0] io_valOut
 );
 
+  reg         sigDiff;
   reg  [24:0] a1;
   reg  [24:0] b1;
   reg  [24:0] prodT;
@@ -21,14 +25,36 @@ module mul(
   wire        _GEN_0 = state == 2'h1;
   wire        _GEN_1 = state == 2'h2;
   wire        _GEN_2 = _GEN | _GEN_0 | _GEN_1;
+  wire        _GEN_3 = sigDiff == prodT[24] & (prod[49:46] == 4'h0 | prod[49:46] == 4'h1);
   always @(posedge clock) begin
-    automatic logic _GEN_3;
-    _GEN_3 = _GEN | _GEN_0 | ~_GEN_1;
-    if (_GEN & io_start) begin
+    automatic logic _GEN_4;
+    automatic logic _GEN_5;
+    _GEN_4 = _GEN & io_start;
+    _GEN_5 = _GEN | _GEN_0 | ~_GEN_1;
+    if (reset) begin
+      sigDiff <= 1'h0;
+      round <= 1'h0;
+      even <= 1'h0;
+      state <= 2'h0;
+    end
+    else begin
+      automatic logic [3:0][1:0] _GEN_6 =
+        {{2'h0}, {2'h3}, {2'h2}, {io_start ? 2'h1 : state}};
+      if (_GEN_4)
+        sigDiff <= io_a[24] ^ io_b[24];
+      if (_GEN_5) begin
+      end
+      else begin
+        round <= prod[21];
+        even <= ~(prod[22]);
+      end
+      state <= _GEN_6[state];
+    end
+    if (_GEN_4) begin
       a1 <= io_a;
       b1 <= io_b;
     end
-    if (_GEN_3) begin
+    if (_GEN_5) begin
     end
     else
       prodT <= prod[45:21];
@@ -36,28 +62,15 @@ module mul(
     end
     else
       prod <= {{25{a1[24]}}, a1} * {{25{b1[24]}}, b1};
-    if (_GEN_3) begin
+    if (_GEN_5) begin
     end
     else
       rbits <= prod[20:0];
-    if (reset) begin
-      round <= 1'h0;
-      even <= 1'h0;
-      state <= 2'h0;
-    end
-    else begin
-      automatic logic [3:0][1:0] _GEN_4 =
-        {{2'h0}, {2'h3}, {2'h2}, {io_start ? 2'h1 : state}};
-      if (_GEN_3) begin
-      end
-      else begin
-        round <= prod[21];
-        even <= ~(prod[22]);
-      end
-      state <= _GEN_4[state];
-    end
   end // always @(posedge)
+  assign io_busy = _GEN & io_start;
   assign io_done = ~_GEN_2 & (&state);
+  assign io_valid = ~_GEN_2 & (&state) & _GEN_3;
+  assign io_ovf = ~_GEN_2 & (&state) & ~_GEN_3;
   assign io_valOut =
     _GEN_2 | ~(&state)
       ? 25'h0
