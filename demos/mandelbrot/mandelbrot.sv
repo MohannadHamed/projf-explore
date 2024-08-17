@@ -85,7 +85,6 @@ module mandelbrot(
   reg  [24:0] y;
   reg  [24:0] mulA;
   reg  [24:0] mulB;
-  reg  [24:0] mulVal;
   reg  [24:0] mulValP;
   reg         mulStart;
   reg  [24:0] xt;
@@ -119,8 +118,8 @@ module mandelbrot(
     _GEN_6 = state == 3'h5;
     _GEN_7 = _GEN_6 & _mulModule_io_done;
     _GEN_8 = _GEN_0 | _GEN_2 | _GEN_4 | _GEN_5 | ~_GEN_7;
-    _GEN_9 = _GEN_8 ? y2 : mulVal;
-    _GEN_10 = _GEN_8 ? xy2 : x2 + mulVal;
+    _GEN_9 = _GEN_8 ? y2 : _mulModule_io_valOut;
+    _GEN_10 = _GEN_8 ? xy2 : x2 + _mulModule_io_valOut;
     if (_GEN & io_start) begin
       x0 <= io_re;
       y0 <= io_im;
@@ -139,7 +138,7 @@ module mandelbrot(
       if (_GEN_0 | _GEN_2 | _GEN_4 | ~_GEN_13) begin
       end
       else
-        x2 <= mulVal;
+        x2 <= _mulModule_io_valOut;
       if (_GEN_0 | _GEN_2 | ~_GEN_4) begin
       end
       else begin
@@ -170,11 +169,10 @@ module mandelbrot(
     _GEN_11 =
       {{_GEN_9}, {_GEN_9}, {_GEN_9}, {y2}, {y2}, {y2}, {y2}, {io_start ? 25'h0 : y2}};
     y2 <= _GEN_11[state];
-    mulVal <= _mulModule_io_valOut;
     if (_GEN | _GEN_0 | ~_GEN_3) begin
     end
     else
-      mulValP <= mulVal;
+      mulValP <= _mulModule_io_valOut;
     _GEN_12 =
       {{_GEN_10},
        {_GEN_10},
