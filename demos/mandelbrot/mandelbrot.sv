@@ -246,3 +246,4 @@ module mandelbrot(
   assign io_calculating = calculating;
   assign io_done = done;
 endmodule
+
