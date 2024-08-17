@@ -110,7 +110,7 @@ module mandelbrot(
     automatic logic [7:0][24:0] _GEN_12;
     _GEN = state == 3'h0;
     _GEN_0 = state == 3'h1;
-    _GEN_1 = $signed(xy2[24:4]) < 21'sh5 & iter != 8'hFF;
+    _GEN_1 = $signed(xy2[24:21]) < 4'sh5 & iter != 8'hFF;
     _GEN_2 = state == 3'h2;
     _GEN_3 = _GEN_2 & _mulModule_io_done;
     _GEN_4 = state == 3'h3;
