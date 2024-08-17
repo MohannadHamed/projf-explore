@@ -3,10 +3,7 @@ module mul(
   input         clock,
                 reset,
                 io_start,
-  output        io_busy,
-                io_done,
-                io_valid,
-                io_ovf,
+  output        io_done,
   input  [24:0] io_a,
                 io_b,
   output [24:0] io_valOut
@@ -67,10 +64,7 @@ module mul(
     else
       rbits <= prod[20:0];
   end // always @(posedge)
-  assign io_busy = _GEN & io_start;
   assign io_done = ~_GEN_2 & (&state);
-  assign io_valid = ~_GEN_2 & (&state) & _GEN_3;
-  assign io_ovf = ~_GEN_2 & (&state) & ~_GEN_3;
   assign io_valOut =
     _GEN_2 | ~(&state)
       ? 25'h0
