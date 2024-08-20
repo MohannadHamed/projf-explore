@@ -29,7 +29,7 @@ module mandelbrot #(
     logic signed [FP_WIDTH-1:0] mul_a, mul_b, mul_val, mul_val_p;
     logic mul_start, mul_done;
     mul #(.WIDTH(FP_WIDTH), .FBITS(FP_WIDTH - FP_INT)) mul_inst (
-        .clk,
+        /*.clk,
         .rst,
         .start(mul_start),
         /* verilator lint_off PINCONNECTEMPTY */
@@ -42,7 +42,7 @@ module mandelbrot #(
         /* verilator lint_on PINCONNECTEMPTY */
         .a(mul_a),
         .b(mul_b),
-        .val(mul_val)
+        .val(mul_val)*/
     );
 
     /* verilator lint_off UNUSED */
